@@ -133,6 +133,22 @@ sub processQ {
                                 } else {
                                         $qf{TIME} = $data;
                                 }
+                        } elsif ($rec eq "p") {
+                                my $jump;
+                                my $ix = rindex($data," ");
+                                if($ix >= -1) {
+                                        $jump = substr($data,$ix+1,length($data)-($ix+1));
+                                } else {
+                                        $jump = $data;
+                                };
+                                if($jump == 0) {
+                                        next;
+                                } else {
+                                        seek($fh,$jump,0);
+                                        next;
+                                }
+                        } elsif ($rec eq "E") {
+                                last;
                         } 
 		}
 		$fh->close();
