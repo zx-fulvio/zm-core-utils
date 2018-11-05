@@ -132,7 +132,7 @@ sub processQ {
 		#print STDERR "Processing file $_\n";
 		my $fh = new IO::File ($_, "r") || return;
 		my ($rec, $len, $data) = get_record($fh);
-		$qf{TO} = ();
+		$qf{TO} = [];
 		if ($rec eq "C") { # Size
 			($qf{SIZE}) = ($data =~ m/\s*(\d+)\s*\d+\s*\d+/);
 		} 
@@ -164,6 +164,22 @@ sub processQ {
                                 } else {
                                         $qf{TIME} = $data;
                                 }
+                        } elsif ($rec eq "p") {
+                                my $jump;
+                                my $ix = rindex($data," ");
+                                if($ix >= -1) {
+                                        $jump = substr($data,$ix+1,length($data)-($ix+1));
+                                } else {
+                                        $jump = $data;
+                                };
+                                if($jump == 0) {
+                                        next;
+                                } else {
+                                        seek($fh,$jump,0);
+                                        next;
+                                }
+                        } elsif ($rec eq "E") {
+                                last;
                         } 
 		}
 		$fh->close();
